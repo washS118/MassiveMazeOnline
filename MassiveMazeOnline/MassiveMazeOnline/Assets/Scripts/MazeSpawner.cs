@@ -24,25 +24,32 @@ public class MazeSpawner : MonoBehaviour {
             Node currentNode = unfinishedNodes[unfinishedNodes.Count - 1];
 
             IntVector2D neighbor;
-            int count = 4;
+            bool[] isSet = { false, false, false, false };
             do
             {
-
                 neighbor = getRandomNeighbor(currentNode);
-                if (neighbor.x == 0 ||
+                
+                if (neighbor.x < 0 ||
                     neighbor.x >= dimentions.x ||
-                    neighbor.y == 0 ||
+                    neighbor.y < 0 ||
                     neighbor.y >= dimentions.y) neighbor = currentNode.location;
-            } while (grid[neighbor.y, neighbor.x] != null && count >= 0);
 
-            if(count < 0)
+                if (neighbor.x > currentNode.location.x) isSet[0] = true;
+                if (neighbor.x < currentNode.location.x) isSet[0] = true;
+                if (neighbor.y > currentNode.location.y) isSet[0] = true;
+                if (neighbor.y < currentNode.location.y) isSet[0] = true;
+            } while (!isSet[0] || !isSet[1] || !isSet[2] || !isSet[3]);
+
+            if(isSet[0] && isSet[1] && isSet[2] && isSet[3])
             {
                 unfinishedNodes.Remove(currentNode);
                 continue;
             }
 
-            unfinishedNodes.Add(new Node(neighbor));
-            grid[neighbor.y, neighbor.x] = unfinishedNodes[unfinishedNodes.Count - 1];
+            Node newNode = new Node(neighbor);
+            unfinishedNodes.Add(newNode);
+            nodes.Add(newNode);
+            grid[neighbor.y, neighbor.x] = newNode;
         }
 
 	}
